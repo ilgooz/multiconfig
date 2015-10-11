@@ -88,7 +88,7 @@ func (f *FlagLoader) processField(flagSet *flag.FlagSet, fieldName string, field
 	switch {
 	case field.Kind() == reflect.Struct && !implementsTextUnmarshaler(field):
 		for _, ff := range field.Fields() {
-			flagName := field.Name() + "-" + ff.Name()
+			flagName := fieldName + "-" + ff.Name()
 
 			if f.Flatten {
 				// first check if it's set or not, because if we have duplicate
