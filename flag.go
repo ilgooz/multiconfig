@@ -77,6 +77,10 @@ func (f *FlagLoader) Load(s interface{}) error {
 // nested struct is detected, a flag for each field of that nested struct is
 // generated too.
 func (f *FlagLoader) processField(flagSet *flag.FlagSet, fieldName string, field *structs.Field) error {
+	if !field.IsExported() {
+		return nil
+	}
+
 	if f.CamelCase {
 		fieldName = strings.Join(camelcase.Split(fieldName), "-")
 	}
@@ -113,10 +117,7 @@ func (f *FlagLoader) processField(flagSet *flag.FlagSet, fieldName string, field
 			fieldName = f.Prefix + "-" + fieldName
 		}
 
-		// we only can get the value from expored fields, unexported fields panics
-		if field.IsExported() {
-			flagSet.Var(newFieldValue(field), flagName(fieldName), flagUsage(fieldName))
-		}
+		flagSet.Var(newFieldValue(field), flagName(fieldName), flagUsage(fieldName))
 	}
 
 	return nil
