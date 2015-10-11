@@ -92,13 +92,15 @@ func (e *EnvironmentLoader) PrintEnvs(s interface{}) {
 func (e *EnvironmentLoader) printField(prefix string, field *structs.Field) {
 	fieldName := e.generateFieldName(prefix, field)
 
-	switch field.Kind() {
-	case reflect.Struct:
-		for _, f := range field.Fields() {
-			e.printField(fieldName, f)
+	if field.IsExported() {
+		switch {
+		case field.Kind() == reflect.Struct && !implementsTextUnmarshaler(field):
+			for _, f := range field.Fields() {
+				e.printField(fieldName, f)
+			}
+		default:
+			fmt.Println("  ", fieldName)
 		}
-	default:
-		fmt.Println("  ", fieldName)
 	}
 }
 
